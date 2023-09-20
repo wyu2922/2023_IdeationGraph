@@ -36,6 +36,9 @@
         <!-- JavaScript will populate this dropdown -->
     </select>
     
+    <!-- "Go" button to trigger filtering -->
+    <button id="filter-button">Go</button>
+    
     <br><br>
     
     <!-- Display Filtered Data -->
@@ -93,6 +96,7 @@
                     const cell1 = document.createElement('td');
                     const cell2 = document.createElement('td');
                     
+                    // Rename columns as requested
                     cell1.textContent = d.src_names;
                     cell2.textContent = d.edge_probs;
                     
@@ -102,11 +106,8 @@
                 });
             }
             
-            // Attach event listeners to dropdowns
-            document.getElementById('association-type').addEventListener('change', updateFilteredData);
-            document.getElementById('model-prediction').addEventListener('change', updateFilteredData);
-            document.getElementById('ugc-signal').addEventListener('change', updateFilteredData);
-            document.getElementById('product-name').addEventListener('change', updateFilteredData);
+            // Attach event listener to the "Go" button
+            document.getElementById('filter-button').addEventListener('click', updateFilteredData);
             
             // Initialize filtered data on page load
             updateFilteredData();
