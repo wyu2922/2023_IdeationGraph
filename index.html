@@ -1,146 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CSV Filter</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        select {
-            padding: 5px;
-        }
-
-        button {
-            padding: 5px 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Filter</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 <body>
-    <h1>CSV Filter</h1>
-
-    <label for="associationType">Association Type:</label>
-    <select id="associationType">
+    <h1>CSV Data Filter</h1>
+    
+    <!-- Dropdown for Association Type -->
+    <label for="association-type">Association Type:</label>
+    <select id="association-type">
         <option value="usage">Usage</option>
         <option value="feature">Feature</option>
     </select>
-
-    <label for="modelPrediction">Model Prediction:</label>
-    <select id="modelPrediction">
+    
+    <!-- Dropdown for Model Prediction -->
+    <label for="model-prediction">Model Prediction:</label>
+    <select id="model-prediction">
         <option value="1">Association Exists</option>
         <option value="0">No Association</option>
     </select>
-
-    <label for="ugcSignal">UGC Signal:</label>
-    <select id="ugcSignal">
+    
+    <!-- Dropdown for UGC Signal -->
+    <label for="ugc-signal">UGC Signal:</label>
+    <select id="ugc-signal">
         <option value="1">Association Exists</option>
         <option value="0">No Association</option>
     </select>
-
-    <label for="productName">Product Name:</label>
-    <select id="productName">
-        <!-- JavaScript will populate this dynamically -->
+    
+    <!-- Dropdown for Product Name -->
+    <label for="product-name">Product Name:</label>
+    <select id="product-name">
+        <!-- JavaScript will populate this dropdown -->
     </select>
-
-    <button id="filterButton">Filter</button>
-
-    <table id="filteredTable">
+    
+    <br><br>
+    
+    <!-- Display Filtered Data -->
+    <table>
         <thead>
             <tr>
                 <th>Keywords for Associations</th>
                 <th>Association Strength</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- JavaScript will populate this dynamically -->
+        <tbody id="filtered-data">
+            <!-- JavaScript will populate this table -->
         </tbody>
     </table>
-
+    
     <script>
-        // JavaScript code to fetch and filter data
-        document.getElementById("filterButton").addEventListener("click", function () {
-            const associationType = document.getElementById("associationType").value;
-            const modelPrediction = document.getElementById("modelPrediction").value;
-            const ugcSignal = document.getElementById("ugcSignal").value;
-            const productName = document.getElementById("productName").value;
-
-            // Fetch CSV data from OneDrive or your data source
-            // Replace 'CSV_FILE_URL' with your actual CSV file URL
-            fetch('https://pennstateoffice365-my.sharepoint.com/:x:/g/personal/wzy5104_psu_edu/EQksMh9hB3hJjfkvmV8VC_sBJx_Wlk5MdKTuAP4UqIClJQ?e=0SVSUB')
-                .then(response => response.text())
-                .then(data => {
-                    // Parse CSV data into an array of objects
-                    const csvData = Papa.parse(data, { header: true }).data;
-
-                    // Filter data based on user selections
-                    const filteredData = csvData.filter(row =>
-                        row.src_types === associationType &&
-                        row.PredEdge === modelPrediction &&
-                        row.isEdge === ugcSignal &&
-                        row.dst_names === productName
-                    );
-
-                    // Limit the maximum rows to 20
-                    const limitedData = filteredData.slice(0, 20);
-
-                    // Display filtered data in the table
-                    const tableBody = document.querySelector("#filteredTable tbody");
-                    tableBody.innerHTML = "";
-
-                    for (const row of limitedData) {
-                        const newRow = tableBody.insertRow();
-                        const cell1 = newRow.insertCell(0);
-                        const cell2 = newRow.insertCell(1);
-
-                        cell1.textContent = row.src_names;
-                        cell2.textContent = row.edge_probs;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        });
-
-        // Populate product name dropdown with unique values from CSV
-        // Fetch CSV data to extract product names
-        // Replace 'CSV_FILE_URL' with your actual CSV file URL
-        fetch('CSV_FILE_URL')
-            .then(response => response.text())
-            .then(data => {
-                const csvData = Papa.parse(data, { header: true }).data;
-                const uniqueProductNames = [...new Set(csvData.map(row => row.dst_names))];
-                uniqueProductNames.sort();
-
-                const productNameDropdown = document.getElementById("productName");
-                for (const name of uniqueProductNames) {
-                    const option = document.createElement("option");
-                    option.value = name;
-                    option.textContent = name;
-                    productNameDropdown.appendChild(option);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching product names:', error);
+        // Read CSV data and filter based on user selections
+        d3.csv('GAE_EdgePreds_0906.csv').then(function(data) {
+            
+            // Populate Product Name dropdown with unique values
+            const productDropdown = document.getElementById('product-name');
+            const productNames = Array.from(new Set(data.map(d => d.dst_names))).sort();
+            
+            productNames.forEach(function(name) {
+                const option = document.createElement('option');
+                option.text = name;
+                option.value = name;
+                productDropdown.appendChild(option);
             });
+            
+            // Function to update filtered data
+            function updateFilteredData() {
+                const associationType = document.getElementById('association-type').value;
+                const modelPrediction = document.getElementById('model-prediction').value;
+                const ugcSignal = document.getElementById('ugc-signal').value;
+                const selectedProduct = document.getElementById('product-name').value;
+                
+                const filteredData = data.filter(function(d) {
+                    return (
+                        d.src_types === associationType &&
+                        d.PredEdge === modelPrediction &&
+                        d.isEdge === ugcSignal &&
+                        d.dst_names === selectedProduct
+                    );
+                });
+                
+                // Display up to 20 rows
+                const displayedData = filteredData.slice(0, 20);
+                
+                const tableBody = document.getElementById('filtered-data');
+                tableBody.innerHTML = '';
+                
+                displayedData.forEach(function(d) {
+                    const row = document.createElement('tr');
+                    const cell1 = document.createElement('td');
+                    const cell2 = document.createElement('td');
+                    
+                    cell1.textContent = d.src_names;
+                    cell2.textContent = d.edge_probs;
+                    
+                    row.appendChild(cell1);
+                    row.appendChild(cell2);
+                    tableBody.appendChild(row);
+                });
+            }
+            
+            // Attach event listeners to dropdowns
+            document.getElementById('association-type').addEventListener('change', updateFilteredData);
+            document.getElementById('model-prediction').addEventListener('change', updateFilteredData);
+            document.getElementById('ugc-signal').addEventListener('change', updateFilteredData);
+            document.getElementById('product-name').addEventListener('change', updateFilteredData);
+            
+            // Initialize filtered data on page load
+            updateFilteredData();
+        });
     </script>
-
-    <!-- Include the PapaParse library for CSV parsing -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </body>
 </html>
