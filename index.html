@@ -7,13 +7,13 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 <body>
-    <h1>CSV Data Filter</h1>
+    <h1>Ideation Graph Prediction Demo</h1>
     
     <!-- Dropdown for Association Type -->
     <label for="association-type">Association Type:</label>
     <select id="association-type">
-        <option value="usage">Usage</option>
-        <option value="feature">Feature</option>
+        <option value="usage">Product and its Usage Situations</option>
+        <option value="feature">Product and its Product Features</option>
     </select>
     
     <!-- Dropdown for Model Prediction -->
@@ -24,7 +24,7 @@
     </select>
     
     <!-- Dropdown for UGC Signal -->
-    <label for="ugc-signal">UGC Signal:</label>
+    <label for="ugc-signal">UGC/FGC Signal:</label>
     <select id="ugc-signal">
         <option value="1">Association Exists</option>
         <option value="0">No Association</option>
@@ -42,17 +42,21 @@
     <br><br>
     
     <!-- Display Filtered Data -->
-    <table>
-        <thead>
-            <tr>
-                <th>Keywords for Associations</th>
-                <th>Association Strength</th>
-            </tr>
-        </thead>
-        <tbody id="filtered-data">
-            <!-- JavaScript will populate this table -->
-        </tbody>
-    </table>
+    <div id="filtered-result">
+        <table>
+            <thead>
+                <tr>
+                    <th>Keywords for Associations</th>
+                    <th>Association Strength</th>
+                </tr>
+            </thead>
+            <tbody id="filtered-data">
+                <!-- JavaScript will populate this table -->
+            </tbody>
+        </table>
+    </div>
+    
+    <div id="no-results" style="display: none;">No results found</div>
     
     <script>
         // Read CSV data and filter based on user selections
@@ -72,38 +76,46 @@
             // Function to update filtered data
             function updateFilteredData() {
                 const associationType = document.getElementById('association-type').value;
-                const modelPrediction = document.getElementById('model-prediction').value;
-                const ugcSignal = document.getElementById('ugc-signal').value;
+                const modelPrediction = parseInt(document.getElementById('model-prediction').value);
+                const ugcSignal = parseInt(document.getElementById('ugc-signal').value);
                 const selectedProduct = document.getElementById('product-name').value;
                 
                 const filteredData = data.filter(function(d) {
                     return (
                         d.src_types === associationType &&
-                        d.PredEdge === modelPrediction &&
-                        d.isEdge === ugcSignal &&
+                        parseInt(d.PredEdge) === modelPrediction &&
+                        parseInt(d.isEdge) === ugcSignal &&
                         d.dst_names === selectedProduct
                     );
                 });
                 
-                // Display up to 20 rows
-                const displayedData = filteredData.slice(0, 20);
-                
+                // Display up to 20 rows or show "No results found"
                 const tableBody = document.getElementById('filtered-data');
-                tableBody.innerHTML = '';
+                const noResults = document.getElementById('no-results');
                 
-                displayedData.forEach(function(d) {
-                    const row = document.createElement('tr');
-                    const cell1 = document.createElement('td');
-                    const cell2 = document.createElement('td');
+                if (filteredData.length > 0) {
+                    noResults.style.display = 'none';
+                    tableBody.innerHTML = '';
                     
-                    // Rename columns as requested
-                    cell1.textContent = d.src_names;
-                    cell2.textContent = d.edge_probs;
+                    const displayedData = filteredData.slice(0, 30);
                     
-                    row.appendChild(cell1);
-                    row.appendChild(cell2);
-                    tableBody.appendChild(row);
-                });
+                    displayedData.forEach(function(d) {
+                        const row = document.createElement('tr');
+                        const cell1 = document.createElement('td');
+                        const cell2 = document.createElement('td');
+                        
+                        // Rename columns as requested
+                        cell1.textContent = d.src_names;
+                        cell2.textContent = d.edge_probs;
+                        
+                        row.appendChild(cell1);
+                        row.appendChild(cell2);
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    noResults.style.display = 'block';
+                    tableBody.innerHTML = '';
+                }
             }
             
             // Attach event listener to the "Go" button
