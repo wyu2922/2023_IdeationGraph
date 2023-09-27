@@ -1,129 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Data Filter</title>
+    <title>Ideation Graph Prediction Demo</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        /* Styles for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            width: 50%;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+        }
+    </style>
+    <style>
+        /* CSS for the layout */
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .left-div {
+            flex-basis: 49%;
+            /* Adjust this value as needed */
+        }
+
+        .right-div {
+            flex-basis: 49%;
+            /* Adjust this value as needed */
+        }
+    </style>
 </head>
+
 <body>
     <h1>Ideation Graph Prediction Demo</h1>
-    
+
     <!-- Dropdown for Association Type -->
     <label for="association-type">Association Type:</label>
     <select id="association-type">
-        <option value="usage">Product and its Usage Situations</option>
-        <option value="feature">Product and its Product Features</option>
+        <option value="usage">Product and Usage Situations</option>
+        <option value="feature">Product and Product Features</option>
     </select>
-    
-    <!-- Dropdown for Model Prediction -->
-    <label for="model-prediction">Model Prediction:</label>
-    <select id="model-prediction">
-        <option value="1">Association Exists</option>
-        <option value="0">No Association</option>
-    </select>
-    
+
     <!-- Dropdown for UGC Signal -->
     <label for="ugc-signal">UGC/FGC Signal:</label>
     <select id="ugc-signal">
         <option value="1">Association Exists</option>
         <option value="0">No Association</option>
     </select>
-    
+
+    <!-- Dropdown for Model Prediction -->
+    <label for="model-prediction">Graph Prediction:</label>
+    <select id="model-prediction">
+        <option value="1">Association Exists</option>
+        <option value="0">No Association</option>
+    </select>
+
     <!-- Dropdown for Product Name -->
     <label for="product-name">Product Name:</label>
     <select id="product-name">
         <!-- JavaScript will populate this dropdown -->
     </select>
-    
+
     <!-- "Go" button to trigger filtering -->
-    <button id="filter-button">Go</button>
-    
+    <button id="filter-button">Go!</button>
+
     <br><br>
-    
-    <!-- Display Filtered Data -->
-    <div id="filtered-result">
-        <table>
-            <thead>
-                <tr>
-                    <th>Keywords for Associations</th>
-                    <th>Association Strength</th>
-                </tr>
-            </thead>
-            <tbody id="filtered-data">
-                <!-- JavaScript will populate this table -->
-            </tbody>
-        </table>
-    </div>
-    
-    <div id="no-results" style="display: none;">No results found</div>
-    
-    <script>
-        // Read CSV data and filter based on user selections
-        d3.csv('GAE_EdgePreds_0906.csv').then(function(data) {
-            
-            // Populate Product Name dropdown with unique values
-            const productDropdown = document.getElementById('product-name');
-            const productNames = Array.from(new Set(data.map(d => d.dst_names))).sort();
-            
-            productNames.forEach(function(name) {
-                const option = document.createElement('option');
-                option.text = name;
-                option.value = name;
-                productDropdown.appendChild(option);
-            });
-            
-            // Function to update filtered data
-            function updateFilteredData() {
-                const associationType = document.getElementById('association-type').value;
-                const modelPrediction = parseInt(document.getElementById('model-prediction').value);
-                const ugcSignal = parseInt(document.getElementById('ugc-signal').value);
-                const selectedProduct = document.getElementById('product-name').value;
-                
-                const filteredData = data.filter(function(d) {
-                    return (
-                        d.src_types === associationType &&
-                        parseInt(d.PredEdge) === modelPrediction &&
-                        parseInt(d.isEdge) === ugcSignal &&
-                        d.dst_names === selectedProduct
-                    );
+
+
+    <div class="flex-container">
+        <div class="left-div">
+            <!-- Display Filtered Data -->
+            <div id="filtered-result">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Row Index</th>
+                            <th>Keywords for Associations</th>
+                            <th>Association Strength</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filtered-data">
+                        <!-- JavaScript will populate this table -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="no-results" style="display: none;">No results found</div>
+
+            <br>
+            <!-- Button to Generate New Product Features -->
+            <button id="generate-features-button">Generate New Product Features</button>
+        </div>
+
+
+        <div class="right-div">
+            <div id="memorized-input-container" style="display: none;">
+                <h2>New Product Features Generated</h2>
+                <div id="memorized-input"></div>
+            </div>
+        </div>
+
+        <!-- The Modal for Row Selection -->
+        <div id="row-selection-modal" class="modal">
+            <div class="modal-content">
+                <h2>Select Keywords for Prompts</h2>
+                <p>This idea generation process requests OpenAI services. We will collect all the keywords from the
+                    rows
+                    you've selected within the
+                    "Keywords for Associations" column to generate new product ideas for you. </p>
+                <p>To initiate the generation of fresh ideas, kindly provide your OpenAI API key in the first blank
+                    field.
+                </p>
+                <p>Then, specify the row index range that corresponds to the keywords you wish to utilize as
+                    prompts for OpenAI. The starting row index should begin at 0. The ending row index should be
+                    less than
+                    the last row index in the table, and greater than the starting row index. </p>
+                <label for="api-key">Your OpenAI API Key:</label>
+                <input type="text" id="api-key" required>
+                <br>
+                <label for="start-row">Start Row Index:</label>
+                <input type="number" id="start-row">
+                <label for="end-row">End Row Index:</label>
+                <input type="number" id="end-row">
+                <br>
+                <br>
+                <button id="submit-row-selection">Submit</button>
+                <button type="button" id="cancel-row-selection">Cancel</button>
+
+            </div>
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script>
+            // Declare filteredData and memorizedInput at a higher scope
+
+            // Read CSV data and filter based on user selections
+            let filteredData = [];
+            let memorizedInput = {};
+
+            d3.csv('GAE_EdgePreds_0906.csv').then(function (data) {
+
+                // Populate Product Name dropdown with unique values
+                const productDropdown = document.getElementById('product-name');
+                const productNames = Array.from(new Set(data.map(d => d.dst_names))).sort();
+
+                productNames.forEach(function (name) {
+                    const option = document.createElement('option');
+                    option.text = name;
+                    option.value = name;
+                    productDropdown.appendChild(option);
                 });
-                
-                // Display up to 20 rows or show "No results found"
-                const tableBody = document.getElementById('filtered-data');
-                const noResults = document.getElementById('no-results');
-                
-                if (filteredData.length > 0) {
-                    noResults.style.display = 'none';
-                    tableBody.innerHTML = '';
-                    
-                    const displayedData = filteredData.slice(0, 30);
-                    
-                    displayedData.forEach(function(d) {
-                        const row = document.createElement('tr');
-                        const cell1 = document.createElement('td');
-                        const cell2 = document.createElement('td');
-                        
-                        // Rename columns as requested
-                        cell1.textContent = d.src_names;
-                        cell2.textContent = d.edge_probs;
-                        
-                        row.appendChild(cell1);
-                        row.appendChild(cell2);
-                        tableBody.appendChild(row);
+
+                // Function to update filtered data
+                function updateFilteredData() {
+                    const associationType = document.getElementById('association-type').value;
+                    const modelPrediction = parseInt(document.getElementById('model-prediction').value);
+                    const ugcSignal = parseInt(document.getElementById('ugc-signal').value);
+                    const selectedProduct = document.getElementById('product-name').value;
+
+                    const filteredData = data.filter(function (d) {
+                        return (
+                            d.src_types === associationType &&
+                            parseInt(d.PredEdge) === modelPrediction &&
+                            parseInt(d.isEdge) === ugcSignal &&
+                            d.dst_names === selectedProduct
+                        );
                     });
-                } else {
-                    noResults.style.display = 'block';
-                    tableBody.innerHTML = '';
+
+                    // Display up to 30 rows or show "No results found"
+                    const tableBody = document.getElementById('filtered-data');
+                    const noResults = document.getElementById('no-results');
+
+                    if (filteredData.length > 0) {
+                        noResults.style.display = 'none';
+                        tableBody.innerHTML = '';
+
+                        const displayedData = filteredData.slice(0, 30);
+
+                        displayedData.forEach(function (d, index) {
+                            const row = document.createElement('tr');
+                            const cell0 = document.createElement('td');
+                            const cell1 = document.createElement('td');
+                            const cell2 = document.createElement('td');
+
+                            // Add row index to the new cell
+                            cell0.textContent = index;
+                            // Rename columns as requested
+                            cell1.textContent = d.src_names;
+                            cell2.textContent = d.edge_probs;
+
+                            row.appendChild(cell0);
+                            row.appendChild(cell1);
+                            row.appendChild(cell2);
+                            tableBody.appendChild(row);
+                        });
+                    } else {
+                        noResults.style.display = 'block';
+                        tableBody.innerHTML = '';
+                    }
+                    return filteredData
+                }
+
+                // Attach event listener to the "Go" button
+                document.getElementById('filter-button').addEventListener('click', updateFilteredData);
+
+                // Initialize filtered data on page load
+                filteredData = updateFilteredData();
+
+
+                // Function to handle the "Generate New Product Features" button click
+                document.getElementById('generate-features-button').addEventListener('click', function () {
+                    // Show the row selection modal
+                    const rowSelectionModal = document.getElementById('row-selection-modal');
+                    rowSelectionModal.style.display = 'block';
+
+                    // Handle "Cancel" button to close the modal
+                    document.getElementById('cancel-row-selection').addEventListener('click', function () {
+                        const rowSelectionModal = document.getElementById('row-selection-modal');
+                        rowSelectionModal.style.display = 'none';
+                    });
+
+                    // Handle row selection when the modal is submitted
+                    document.getElementById('submit-row-selection').addEventListener('click', function () {
+                        // Get the entered start and end row indexes
+                        const startRow = parseInt(document.getElementById('start-row').value);
+                        const endRow = parseInt(document.getElementById('end-row').value);
+                        const apiKey = document.getElementById('api-key').value;
+
+                        if (!isNaN(startRow) && !isNaN(endRow) && startRow >= 0 && endRow >= 0 && startRow <= endRow && endRow < filteredData.length) {
+                            const productName = filteredData[startRow]['dst_names'];
+                            const keywords = [];
+                            for (let i = startRow; i <= endRow; i++) {
+                                const rowData = filteredData[i];
+                                const singleKeyword = rowData['src_names'].split('_');
+                                keywords.push(...singleKeyword);
+                            }
+                            const keywordsString = keywords.join(', ');
+
+                            // Close the row selection modal
+                            const rowSelectionModal = document.getElementById('row-selection-modal');
+                            rowSelectionModal.style.display = 'none';
+
+                            // Show loading message
+                            const memorizedInputContainer = document.getElementById('memorized-input-container');
+                            const memorizedInputDiv = document.getElementById('memorized-input');
+                            memorizedInputDiv.innerHTML = 'Working on it...'
+                            memorizedInputContainer.style.display = 'block';
+
+                            async function sendMessage() {
+                                // Use the apiKey defined previously
+                                const endpoint = "https://api.openai.com/v1/chat/completions";
+                                const ideation_prompt = `Imagine that you are a product manager for ${productName}, the mobile app. Your task is to come up with 5 new product features that are novel and useful for the users. You should use the following keywords as hints to inspire your ideas. The features should enhance the overall user experience and provide value to the customers.\nKeywords: ${keywordsString}`;
+
+                                // Prepare the request data
+                                const requestData = {
+                                    model: "gpt-3.5-turbo",
+                                    messages: [
+                                        { role: "user", content: ideation_prompt }
+                                    ]
+                                };
+
+                                try {
+                                    const response = await fetch(endpoint, {
+                                        method: "POST",
+                                        headers: {
+                                            "Authorization": `Bearer ${apiKey}`,
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify(requestData)
+                                    });
+
+                                    const responseData = await response.json();
+                                    const assistantResponse = responseData.choices[0].message.content;
+
+                                    // Display collected keywords in the memorized-input div
+                                    const memorizedInputContainer = document.getElementById('memorized-input-container');
+                                    const memorizedInputDiv = document.getElementById('memorized-input');
+                                    memorizedInputDiv.innerHTML = `Here are 5 new product features generated by OpenAI using the selected keywords as prompt:<br><br>(Keywords: ${keywordsString})<br><br>${assistantResponse}`;
+                                    memorizedInputContainer.style.display = 'block';
+
+                                } catch (error) {
+                                    console.error("Error sending message:", error);
+                                    const memorizedInputContainer = document.getElementById('memorized-input-container');
+                                    const memorizedInputDiv = document.getElementById('memorized-input');
+                                    memorizedInputDiv.innerHTML = `Error calling OpenAI. Here is the error message: <br><br> ${error}`
+                                    memorizedInputContainer.style.display = 'block';
+                                }
+                            }
+
+                            sendMessage()
+
+                        } else {
+                            alert("Invalid row numbers selected or missing API key. Please try again.");
+                        }
+
+                    });
+
+                });
+
+            });
+
+            // Function to close the modal when clicking outside of it
+            window.onclick = function (event) {
+                const modal = document.getElementById('row-selection-modal');
+                if (event.target == modal) {
+                    modal.style.display = 'none';
                 }
             }
-            
-            // Attach event listener to the "Go" button
-            document.getElementById('filter-button').addEventListener('click', updateFilteredData);
-            
-            // Initialize filtered data on page load
-            updateFilteredData();
-        });
-    </script>
+        </script>
 </body>
+
 </html>
