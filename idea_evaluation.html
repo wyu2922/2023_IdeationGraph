@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+
+<body>
+    <h1>Welcome to the New Page!</h1>
+
+    <div id="csvContent"></div>
+
+    <script>
+        // Function to fetch and parse CSV
+        async function fetchAndDisplayCSV() {
+            const response = await fetch('new_ideas_df_0919.csv');
+            const data = await response.text();
+
+            // Use PapaParse to parse the CSV
+            Papa.parse(data, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: function (results) {
+                    // Randomly pick a row (excluding the header)
+                    const randomRowIndex = Math.floor(Math.random() * (results.data.length - 1)) + 1;
+                    const randomRow = results.data[randomRowIndex];
+
+                    // Display product name
+                    const productName = randomRow['product_name'].toString();
+                    const csvContentDiv = document.getElementById('csvContent');
+                    const productNameParagraph = document.createElement('p');
+                    productNameParagraph.textContent = `Product Name: ${productName}`;
+                    csvContentDiv.appendChild(productNameParagraph);
+
+                    // Display random sentence for each column (except product name)
+                    for (const columnName in randomRow) {
+                        if (columnName !== 'product_name') {
+                            const cellValue = randomRow[columnName].toString();
+                            const sentences = cellValue.split(/\d+\.\s/).filter(sentence => sentence.trim() !== '');
+
+                            // Randomly pick one sentence
+                            const randomSentenceIndex = Math.floor(Math.random() * sentences.length);
+                            const randomSentence = sentences[randomSentenceIndex].trim();
+
+                            // Create a paragraph for the column value
+                            const valueParagraph = document.createElement('p');
+                            valueParagraph.innerHTML = `Value: ${randomSentence}`;
+                            csvContentDiv.appendChild(valueParagraph);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Call the function to fetch and display CSV
+        fetchAndDisplayCSV();
+    </script>
+</body>
+
+</html>

@@ -6,43 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ideation Graph Prediction Demo</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <style>
-        /* Styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            width: 50%;
-            margin: 10% auto;
-            padding: 20px;
-            border-radius: 5px;
-        }
-    </style>
-    <style>
-        /* CSS for the layout */
-        .flex-container {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .left-div {
-            flex-basis: 49%;
-            /* Adjust this value as needed */
-        }
-
-        .right-div {
-            flex-basis: 49%;
-            /* Adjust this value as needed */
-        }
-    </style>
+    <link rel="stylesheet" href="index_styles.css">
 </head>
 
 <body>
@@ -79,8 +43,6 @@
     <button id="filter-button">Go!</button>
 
     <br><br>
-
-
     <div class="flex-container">
         <div class="left-div">
             <!-- Display Filtered Data -->
@@ -138,190 +100,17 @@
                 <input type="number" id="end-row">
                 <br>
                 <br>
-                <button id="submit-row-selection">Submit</button>
+                <button type="button" id="submit-row-selection">Submit</button>
                 <button type="button" id="cancel-row-selection">Cancel</button>
 
             </div>
 
         </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index_script.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-        <script>
-            // Read CSV data and filter based on user selections
-            d3.csv('GAE_EdgePreds_0906.csv').then(function (data) {
-
-                // Populate Product Name dropdown with unique values
-                const productDropdown = document.getElementById('product-name');
-                const productNames = Array.from(new Set(data.map(d => d.dst_names))).sort();
-
-                productNames.forEach(function (name) {
-                    const option = document.createElement('option');
-                    option.text = name;
-                    option.value = name;
-                    productDropdown.appendChild(option);
-                });
-
-                // Function to update filtered data
-                function updateFilteredData() {
-                    const associationType = document.getElementById('association-type').value;
-                    const modelPrediction = parseInt(document.getElementById('model-prediction').value);
-                    const ugcSignal = parseInt(document.getElementById('ugc-signal').value);
-                    const selectedProduct = document.getElementById('product-name').value;
-
-                    const filteredData = data.filter(function (d) {
-                        return (
-                            d.src_types === associationType &&
-                            parseInt(d.PredEdge) === modelPrediction &&
-                            parseInt(d.isEdge) === ugcSignal &&
-                            d.dst_names === selectedProduct
-                        );
-                    });
-
-                    // Display up to 30 rows or show "No results found"
-                    const tableBody = document.getElementById('filtered-data');
-                    const noResults = document.getElementById('no-results');
-
-                    if (filteredData.length > 0) {
-                        noResults.style.display = 'none';
-                        tableBody.innerHTML = '';
-
-                        const displayedData = filteredData.slice(0, 30);
-
-                        displayedData.forEach(function (d, index) {
-                            const row = document.createElement('tr');
-                            const cell0 = document.createElement('td');
-                            const cell1 = document.createElement('td');
-                            const cell2 = document.createElement('td');
-
-                            // Add row index to the new cell
-                            cell0.textContent = index;
-                            // Rename columns as requested
-                            cell1.textContent = d.src_names;
-                            cell2.textContent = d.edge_probs;
-
-                            row.appendChild(cell0);
-                            row.appendChild(cell1);
-                            row.appendChild(cell2);
-                            tableBody.appendChild(row);
-                        });
-                    } else {
-                        noResults.style.display = 'block';
-                        tableBody.innerHTML = '';
-                    }
-                    return filteredData
-
-                }
-
-                // Initialize filtered data on page load
-                let filteredData = updateFilteredData();
-                //updateFilteredData();
-
-                // Attach event listener to the "Go" button
-                document.getElementById('filter-button').addEventListener('click', function () {
-                    filteredData = updateFilteredData();
-                });
-
-                // Function to handle the "Generate New Product Features" button click
-                document.getElementById('generate-features-button').addEventListener('click', function () {
-                    // Show the row selection modal
-                    const rowSelectionModal = document.getElementById('row-selection-modal');
-                    rowSelectionModal.style.display = 'block';
-
-                    // Handle "Cancel" button to close the modal
-                    document.getElementById('cancel-row-selection').addEventListener('click', function () {
-                        const rowSelectionModal = document.getElementById('row-selection-modal');
-                        rowSelectionModal.style.display = 'none';
-                    });
-
-                    // Handle row selection when the modal is submitted
-                    document.getElementById('submit-row-selection').addEventListener('click', function () {
-                        // Get the entered start and end row indexes
-                        const startRow = parseInt(document.getElementById('start-row').value);
-                        const endRow = parseInt(document.getElementById('end-row').value);
-                        const apiKey = document.getElementById('api-key').value;
-
-                        if (!isNaN(startRow) && !isNaN(endRow) && startRow >= 0 && endRow >= 0 && startRow <= endRow && endRow < filteredData.length) {
-                            const productName = filteredData[startRow]['dst_names'];
-                            const keywords = [];
-                            for (let i = startRow; i <= endRow; i++) {
-                                const rowData = filteredData[i];
-                                const singleKeyword = rowData['src_names'].split('_');
-                                keywords.push(...singleKeyword);
-                            }
-                            const keywordsString = keywords.join(', ');
-
-                            // Close the row selection modal
-                            const rowSelectionModal = document.getElementById('row-selection-modal');
-                            rowSelectionModal.style.display = 'none';
-
-                            // Show loading message
-                            const memorizedInputContainer = document.getElementById('memorized-input-container');
-                            const memorizedInputDiv = document.getElementById('memorized-input');
-                            memorizedInputDiv.innerHTML = 'Working on it...'
-                            memorizedInputContainer.style.display = 'block';
-
-                            async function sendMessage() {
-                                // Use the apiKey defined previously
-                                const endpoint = "https://api.openai.com/v1/chat/completions";
-                                const ideation_prompt = `Imagine that you are a product manager for ${productName}, the mobile app. Your task is to come up with 5 new product features that are novel and useful for the users. You should use the following keywords as hints to inspire your ideas. The features should enhance the overall user experience and provide value to the customers.\nKeywords: ${keywordsString}`;
-
-                                // Prepare the request data
-                                const requestData = {
-                                    model: "gpt-3.5-turbo",
-                                    messages: [
-                                        { role: "user", content: ideation_prompt }
-                                    ]
-                                };
-
-                                try {
-                                    const response = await fetch(endpoint, {
-                                        method: "POST",
-                                        headers: {
-                                            "Authorization": `Bearer ${apiKey}`,
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify(requestData)
-                                    });
-
-                                    const responseData = await response.json();
-                                    const assistantResponse = responseData.choices[0].message.content;
-
-                                    // Display collected keywords in the memorized-input div
-                                    const memorizedInputContainer = document.getElementById('memorized-input-container');
-                                    const memorizedInputDiv = document.getElementById('memorized-input');
-                                    memorizedInputDiv.innerHTML = `Here are 5 new product features generated by OpenAI using the selected keywords as prompt:<br><br>(Product: ${productName})<br>(Keywords: ${keywordsString})<br><br>${assistantResponse}`;
-                                    memorizedInputContainer.style.display = 'block';
-
-                                } catch (error) {
-                                    console.error("Error sending message:", error);
-                                    const memorizedInputContainer = document.getElementById('memorized-input-container');
-                                    const memorizedInputDiv = document.getElementById('memorized-input');
-                                    memorizedInputDiv.innerHTML = `Error calling OpenAI. Here is the error message: <br><br> ${error}`
-                                    memorizedInputContainer.style.display = 'block';
-                                }
-                            }
-
-                            sendMessage()
-
-                        } else {
-                            alert("Invalid row numbers selected or missing API key. Please try again.");
-                        }
-
-                    });
-
-                });
-
-            });
-
-            // Function to close the modal when clicking outside of it
-            window.onclick = function (event) {
-                const modal = document.getElementById('row-selection-modal');
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-        </script>
 </body>
 
 </html>
