@@ -7,7 +7,7 @@
 let filteredData = [];
 async function fetchDataAndFilter() {
     try {
-        const data = await d3.csv('GAE_EdgePreds_0906.csv');
+        const data = await d3.csv('data/GAE_EdgePreds_0906.csv');
         populateProductDropdown(data);
         updateFilteredData(data);
         initializeEventListeners(data);
@@ -213,7 +213,7 @@ function handleGenerateFeaturesButtonClick() {
 
 function formatAssistantResponse(response) {
     // Split the response into individual points
-    const points = response.split(/\d+[.)]/).filter(Boolean);
+    const points = response.split(/\d+[.)]|Feature \d+:/).filter(Boolean);
 
     // Format each point
     const formattedPoints = points.map(point => {
