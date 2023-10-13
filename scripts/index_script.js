@@ -213,7 +213,7 @@ function handleGenerateFeaturesButtonClick() {
 
 function formatAssistantResponse(response) {
     // Split the response into individual points
-    const points = response.split(/\d+[.)]|Feature \d+:/).filter(Boolean);
+    const points = response.split(/\d+[.)]|Feature \d+[.):]/).filter(Boolean);
 
     // Format each point
     const formattedPoints = points.map(point => {
