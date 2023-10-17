@@ -1,0 +1,77 @@
+ /* control container appearance */
+
+ body {
+     font-family: 'Roboto', sans-serif;
+     margin: 20px;
+ }
+
+ #intro-container,
+ #survey-container,
+ #product-screen-container {
+     max-width: 650px;
+     margin: auto;
+ }
+
+
+ h1 {
+     font-size: 1.5em;
+     text-align: center;
+     background-color: rgba(128, 128, 128, 0.5);
+     font-family: "Georgia", sans-serif;
+     line-height: 2.5;
+
+ }
+
+ #intro-container p {
+     margin-top: 60px;
+     text-align: left;
+     line-height: 1.4;
+     margin-left: 25px;
+     margin-right: 25px;
+ }
+
+ #product-screen-container input[type="radio"],
+ #survey-container input[type="radio"] {
+     margin-right: 20px;
+     margin-left: 20px;
+     margin-bottom: 5px;
+ }
+
+
+ #user-progress {
+     margin-bottom: 10px;
+     background-color: rgba(128, 128, 128, 0.3);
+     text-align: center;
+     line-height: 2;
+     font-size: 0.95em;
+ }
+
+ #idea_desc {
+     max-width: 600px;
+     text-align: left;
+     font-size: 1.1em
+ }
+
+ #idea {
+     background-color: yellow;
+     padding: 5px;
+     max-width: 600px;
+     margin-right: 25px;
+     margin-left: 25px;
+     text-align: left;
+     font-family: "Playfair Display";
+     font-size: 1.15em
+ }
+
+ .question-description {
+     margin-top: 10px;
+     font-weight: bold;
+     line-height: 1.3;
+     margin-right: 50px;
+ }
+
+ /* control container block and hide */
+ #survey-container,
+ #product-screen-container {
+     display: none;
+ }
