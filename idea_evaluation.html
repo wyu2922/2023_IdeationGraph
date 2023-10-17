@@ -4,61 +4,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Page</title>
+    <title>Survey Website</title>
+    <link rel="stylesheet" href="styles/idea_evaluation_styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
 </head>
 
 <body>
-    <h1>Welcome to the New Page!</h1>
 
-    <div id="csvContent"></div>
+    <div id="intro-container">
+        <h1>Introduction</h1>
+        <p>Welcome! <br><br>We are a research team from Penn State University dedicated to advancing product
+            innovation. <strong>This survey seeks your evaluation of new product features for 5 mobile
+                applications. </strong>For
+            each product, you will evaluate 5 product features. <br><br>Your feedback is instrumental in enhancing
+            our understanding of mobile
+            app
+            usage behavior and, consequently, in contributing to the creation of better mobile app products that
+            solve
+            users’ day-to-day challenges and bring greater value to users around the world. <br>
+            <br>Please be assured that your
+            data will be used exclusively for research purposes, and no personal information will be retained. <br>
+            <br>Thank you
+            for collaborating with us and contributing to a better world!<br>
 
-    <script>
-        // Function to fetch and parse CSV
-        async function fetchAndDisplayCSV() {
-            const response = await fetch('new_ideas_df_0919.csv');
-            const data = await response.text();
+            <br>
+        </p>
+        <button onclick="loadIdeaData(gen_random_samples())">Go to Survey</button>
+        <button onclick="showExitAlert()">Exit</button>
+    </div>
 
-            // Use PapaParse to parse the CSV
-            Papa.parse(data, {
-                header: true,
-                skipEmptyLines: true,
-                dynamicTyping: true,
-                complete: function (results) {
-                    // Randomly pick a row (excluding the header)
-                    const randomRowIndex = Math.floor(Math.random() * (results.data.length - 1)) + 1;
-                    const randomRow = results.data[randomRowIndex];
 
-                    // Display product name
-                    const productName = randomRow['product_name'].toString();
-                    const csvContentDiv = document.getElementById('csvContent');
-                    const productNameParagraph = document.createElement('p');
-                    productNameParagraph.textContent = `Product Name: ${productName}`;
-                    csvContentDiv.appendChild(productNameParagraph);
+    <div id="product-screen-container">
+        <h1>Product Screen Question</h1>
 
-                    // Display random sentence for each column (except product name)
-                    for (const columnName in randomRow) {
-                        if (columnName !== 'product_name') {
-                            const cellValue = randomRow[columnName].toString();
-                            const sentences = cellValue.split(/\d+\.\s/).filter(sentence => sentence.trim() !== '');
+        <p id="product-screen-question"></p>
 
-                            // Randomly pick one sentence
-                            const randomSentenceIndex = Math.floor(Math.random() * sentences.length);
-                            const randomSentence = sentences[randomSentenceIndex].trim();
+        <input type="radio" id="unaware" name="familiarity" value="unaware">
+        <label for="unaware">Unaware of it.</label>
+        <br>
+        <input type="radio" id="aware" name="familiarity" value="aware">
+        <label for="aware">Aware but haven't used it.</label>
+        <br>
+        <input type="radio" id="used" name="familiarity" value="used">
+        <label for="used">I used it in the past but no longer do (including trying it once or twice).</label>
+        <br>
+        <input type="radio" id="occasionally" name="familiarity" value="occasionally">
+        <label for="occasionally">I use it occasionally.</label>
+        <br>
+        <input type="radio" id="frequently" name="familiarity" value="frequently">
+        <label for="frequently">I use it frequently.</label>
+        <br>
+        <br>
+        <button onclick="handleUserChoice()">Confirm</button>
+    </div>
 
-                            // Create a paragraph for the column value
-                            const valueParagraph = document.createElement('p');
-                            valueParagraph.innerHTML = `Value: ${randomSentence}`;
-                            csvContentDiv.appendChild(valueParagraph);
-                        }
-                    }
-                }
-            });
-        }
+    <div id="survey-container">
+        <h1>Survey Questions</h1>
+        <!-- Add the following line to show user progress -->
+        <p id="user-progress">Your progress: this is idea <strong><span id="current-index">1</span></strong> of
+            <span id="total-ideas">1</span> in
+            product <strong><span id="product-evaluated">1</span></strong> of 5 evaluated.
+        </p>
 
-        // Call the function to fetch and display CSV
-        fetchAndDisplayCSV();
-    </script>
+        <p id="idea_desc"></p>
+        <p id="idea"> </p>
+        <p> <br>Based on this product feature description, answer the following questions: </p>
+
+        <form id="survey-form">
+            <!-- Question 1 -->
+            <div class="question-description">Question 1. This product feature is well articulated.</div>
+            <label>
+                <input type="radio" name="question1" value="1"> Strongly Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question1" value="2"> Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question1" value="3"> Neither Agree nor Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question1" value="4"> Agree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question1" value="5"> Strongly Agree
+            </label>
+            <br>
+            <br>
+
+            <!-- Question 2 -->
+            <div class="question-description">Question 2. I find this product feature useful (beneficial).</div>
+            <label>
+                <input type="radio" name="question2" value="1"> Strongly Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question2" value="2"> Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question2" value="3"> Neither Agree nor Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question2" value="4"> Agree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question2" value="5"> Strongly Agree
+            </label>
+
+            <br>
+            <br>
+
+            <!-- Question 3 -->
+            <div class="question-description">Question 3. I find this product feature original (novel).</div>
+            <label>
+                <input type="radio" name="question3" value="1"> Strongly Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question3" value="2"> Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question3" value="3"> Neither Agree nor Disagree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question3" value="4"> Agree
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question3" value="5"> Strongly Agree
+            </label>
+
+            <br>
+            <br>
+
+            <!-- Question 4 -->
+            <div class="question-description">Question 4. How likely are you to use this product (not necessarily this
+                specific
+                product feature) if it were incorporated into Tinder?</div>
+            <label>
+                <input type="radio" name="question4" value="1"> Definitely would not use (including I do not use the
+                product).
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question4" value="2"> Probably would not use.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question4" value="3"> Might or might not use.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question4" value="4"> Probably would use.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question4" value="5"> Definitely would use.
+            </label>
+            <br>
+            <br>
+
+            <!-- Question 5 -->
+            <div class="question-description">Question 5. How likely are you to use this particular product feature if
+                it were
+                incorporated into the product?</div>
+            <label>
+                <input type="radio" name="question5" value="1"> Definitely would not use (including I do not use the
+                product).
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question5" value="2"> Probably would not use.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question5" value="3"> Might or might not use.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question5" value="4"> Probably would use.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question5" value="5"> Definitely would use.
+            </label>
+            <br>
+            <br>
+
+            <!-- Question 6 -->
+            <div class="question-description">Question 6. Are you aware of any other competing products to this product
+                (product serves the same purpose) in the market that offer a feature similar to this?</div>
+            <label>
+                <input type="radio" name="question6" value="1"> I have never seen such a feature before, or I do not
+                know.
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question6" value="2"> I am aware of some products that have features just
+                like this
+            </label>
+            <br>
+            <label>
+                <input type="radio" name="question6" value="3"> Many other competing products have features just
+                like this.
+            </label>
+
+            <br>
+        </form>
+
+
+        <br>
+        <br>
+
+        <button type="button" onclick="startSurvey()">Next</button>
+        <button type="button" onclick="gen_random_samples()">Switch Product</button>
+        </form>
+    </div>
+
+    <script src="scripts/idea_evaluation_script.js"></script>
 </body>
 
 </html>
