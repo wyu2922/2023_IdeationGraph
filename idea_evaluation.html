@@ -30,7 +30,7 @@
 
             <br>
         </p>
-        <button onclick="loadIdeaData(gen_random_samples())">Go to Survey</button>
+        <button onclick="loadIdeaData()">Go to Survey</button>
         <button onclick="showExitAlert()">Exit</button>
     </div>
 
@@ -56,7 +56,7 @@
         <label for="frequently">I use it frequently.</label>
         <br>
         <br>
-        <button onclick="handleUserChoice()">Confirm</button>
+        <button onclick="handleProductScreen()">Confirm Product</button>
     </div>
 
     <div id="survey-container">
@@ -225,8 +225,8 @@
         <br>
         <br>
 
-        <button type="button" onclick="startSurvey()">Next</button>
-        <button type="button" onclick="gen_random_samples()">Switch Product</button>
+        <button type="button" onclick="handleIdeaNext()">Next Idea</button>
+        <button type="button" onclick="handleSwitchProduct()">Switch Product</button>
         </form>
     </div>
 
