@@ -66,8 +66,10 @@
  .question-description {
      margin-top: 10px;
      font-weight: bold;
+     font-size: 1.05em;
      line-height: 1.3;
      margin-right: 50px;
+     margin-bottom: 5px;
  }
 
  /* control container block and hide */
