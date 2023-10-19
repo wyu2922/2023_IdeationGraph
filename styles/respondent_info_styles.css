@@ -1,0 +1,49 @@
+ /* control container appearance */
+
+ body {
+     font-family: 'Roboto', sans-serif;
+     margin: 20px;
+ }
+
+ #info {
+     max-width: 650px;
+     margin: auto;
+     line-height: 1.15;
+
+ }
+
+ #info p {
+     max-width: 600px;
+     margin: auto;
+ }
+
+ h1 {
+     font-size: 1.5em;
+     text-align: center;
+     background-color: rgba(128, 128, 128, 0.5);
+     font-family: "Georgia", sans-serif;
+     line-height: 2.5;
+
+ }
+
+ #participantForm {
+     margin-top: 10px;
+     text-align: left;
+     margin-left: 25px;
+     margin-right: 25px;
+ }
+
+ #participantForm input[type="radio"] {
+     margin-right: 5px;
+     margin-left: 20px;
+     margin-bottom: 5px;
+ }
+
+
+ .question-description {
+     margin-top: 50px;
+     font-weight: bold;
+     font-size: 1.01em;
+     line-height: 1.3;
+     margin-right: 50px;
+ }

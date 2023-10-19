@@ -1,0 +1,96 @@
+ /* control container appearance */
+
+ body {
+     font-family: 'Roboto', sans-serif;
+     margin: 20px;
+ }
+
+ #intro-container,
+ #instruction-container,
+ #survey-container,
+ #product-screen-container {
+     max-width: 650px;
+     margin: auto;
+ }
+
+ h1 {
+     font-size: 1.5em;
+     text-align: center;
+     background-color: rgba(128, 128, 128, 0.5);
+     font-family: "Georgia", sans-serif;
+     line-height: 2.5;
+
+ }
+
+ #intro-container p,
+ #instruction-container p {
+     margin-top: 30px;
+     margin-bottom: 50px;
+     margin-left: 25px;
+     margin-right: 25px;
+     text-align: left;
+     line-height: 1.4;
+ }
+
+ #survey-container input[type="radio"] {
+     margin-right: 5px;
+     margin-left: 5px;
+ }
+
+ #survey-form-1 {
+     margin-left: 25px;
+     margin-right: 25px;
+     margin-bottom: 10px;
+ }
+
+ #survey-form-2 {
+     margin-left: 25px;
+     margin-right: 25px;
+     margin-bottom: 10px;
+ }
+
+ .idea-option {
+     margin-bottom: 100px;
+     /* Adjust the value to increase or decrease the distance */
+ }
+
+ #user-progress {
+     margin-bottom: 10px;
+     background-color: rgba(128, 128, 128, 0.3);
+     text-align: center;
+     line-height: 2;
+     font-size: 0.95em;
+ }
+
+ #idea_desc {
+     max-width: 600px;
+     text-align: left;
+     font-size: 1.1em
+ }
+
+ #idea {
+     background-color: yellow;
+     padding: 5px;
+     max-width: 600px;
+     margin-right: 25px;
+     margin-left: 25px;
+     text-align: left;
+     font-family: "Playfair Display";
+     font-size: 1.15em
+ }
+
+ .question-description {
+     margin-top: 10px;
+     font-weight: bold;
+     font-size: 1.05em;
+     line-height: 1.3;
+     margin-right: 50px;
+     margin-bottom: 5px;
+ }
+
+ /* control container block and hide */
+ #instruction-container,
+ #survey-container,
+ #product-screen-container {
+     display: none;
+ }
