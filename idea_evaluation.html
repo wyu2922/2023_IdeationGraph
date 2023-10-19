@@ -4,33 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey Website</title>
+    <title>Idea Quality Evaluation</title>
     <link rel="stylesheet" href="styles/idea_evaluation_styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
 </head>
 
 <body>
-
     <div id="intro-container">
-        <h1>Introduction</h1>
+        <h1>Idea Quality Evaluation Survey</h1>
         <p>Welcome! <br><br>We are a research team from Penn State University dedicated to advancing product
             innovation. <strong>This survey seeks your evaluation of new product features for 5 mobile
-                applications. </strong>For
-            each product, you will evaluate 5 product features. <br><br>Your feedback is instrumental in enhancing
-            our understanding of mobile
-            app
-            usage behavior and, consequently, in contributing to the creation of better mobile app products that
-            solve
-            users’ day-to-day challenges and bring greater value to users around the world. <br>
-            <br>Please be assured that your
-            data will be used exclusively for research purposes, and no personal information will be retained. <br>
-            <br>Thank you
-            for collaborating with us and contributing to a better world!<br>
-
-            <br>
+                applications. </strong>For each product, you will evaluate 5 product features. <br><br>Your feedback is
+            instrumental in enhancing our understanding of mobile app usage behavior and, consequently, in contributing
+            to
+            the creation of better mobile app products that solve users’ day-to-day challenges and bring greater value
+            to
+            users around the world. <br><br>Please be assured that your data will be used exclusively for research
+            purposes, and no personal information will be retained. <br><br>Thank you for collaborating with us and
+            contributing to a better world!<br>
         </p>
         <button onclick="loadIdeaData()">Go to Survey</button>
+        <p>Or, I'd rather...</p>
+        <button onclick="toAdoptIntention()">Go to Experiment</button>
         <button onclick="showExitAlert()">Exit</button>
     </div>
 
@@ -97,7 +93,7 @@
             <br>
 
             <!-- Question 2 -->
-            <div class="question-description">Question 2. I find this product feature useful (beneficial).</div>
+            <div class="question-description">Question 2. I find this product feature <u>useful (beneficial)</u>.</div>
             <label>
                 <input type="radio" name="question2" value="1"> Strongly Disagree
             </label>
@@ -122,7 +118,7 @@
             <br>
 
             <!-- Question 3 -->
-            <div class="question-description">Question 3. I find this product feature original (novel).</div>
+            <div class="question-description">Question 3. I find this product feature <u>original (novel)</u>.</div>
             <label>
                 <input type="radio" name="question3" value="1"> Strongly Disagree
             </label>
@@ -147,12 +143,11 @@
             <br>
 
             <!-- Question 4 -->
-            <div class="question-description">Question 4. How likely are you to use this product (not necessarily this
-                specific
-                product feature) if it were incorporated into Tinder?</div>
+            <div class="question-description">Question 4. How likely are you to use <u>this product</u> if this specific
+                product feature were incorporated (not necessarily this
+                product feature) ?</div>
             <label>
-                <input type="radio" name="question4" value="1"> Definitely would not use (including I do not use the
-                product).
+                <input type="radio" name="question4" value="1"> Definitely would not use.
             </label>
             <br>
             <label>
@@ -174,7 +169,8 @@
             <br>
 
             <!-- Question 5 -->
-            <div class="question-description">Question 5. How likely are you to use this particular product feature if
+            <div class="question-description">Question 5. How likely are you to use <u>this particular product
+                    feature</u> if
                 it were
                 incorporated into the product?</div>
             <label>
@@ -201,7 +197,8 @@
             <br>
 
             <!-- Question 6 -->
-            <div class="question-description">Question 6. Are you aware of any other competing products to this product
+            <div class="question-description">Question 6. Are you aware of any other <u>competing products</u> to this
+                product
                 (product serves the same purpose) in the market that offer a feature similar to this?</div>
             <label>
                 <input type="radio" name="question6" value="1"> I have never seen such a feature before, or I do not

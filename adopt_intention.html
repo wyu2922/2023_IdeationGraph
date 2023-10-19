@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idea Adopt Intent</title>
+    <link rel="stylesheet" href="styles/adopt_intention_styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+</head>
+
+<body>
+
+    <div id="intro-container">
+        <h1>Product Adoption Intention Survey</h1>
+        <p>Welcome! <br><br>
+
+            We are a research team from Penn State University dedicated to advancing product innovation. <strong>This
+                survey seeks your evaluation of new product features for 20 mobile applications.</strong> Your feedback
+            is instrumental in enhancing our understanding of mobile app usage behavior and, consequently, in
+            contributing to the creation of better mobile app products that solve users’ day-to-day challenges and bring
+            greater
+            value to users around the world. <br><br>Please be assured that your data will be used exclusively for
+            research purposes, and no personal information will be retained. Thank you for collaborating with us and
+            contributing to a better world!
+
+        </p>
+        <button onclick="displayExprimentInstruction()">Start Survey</button>
+        <button onclick="toRespondentInfo()">Exit Survey</button>
+        <button onclick="showExitAlert()">To Homepage</button>
+    </div>
+
+
+    <div id="instruction-container">
+        <h1>Survey Instruction</h1>
+        <p>Please read the following instruction carefully.<br><br>
+            On your desk, you'll find a folder with a $5 coupon. In the upcoming survey, you'll be presented with a
+            random mobile app and asked if you currently use it. If yes, you'll assess 5 shortlisted features for the
+            app's upcoming update. <strong>Choose the feature you'd most like to use and specify how much you'd pay for
+                using it
+                using the $5 coupon </strong>(payment options range from 0 to 5).
+            <br>
+            <br>
+            As you exit the room after the survey, a staff member will redeem the coupon. Out of all the products you
+            evaluated, 5 of them already have a real beta version. Our system will randomly
+            choose one from the 5
+            mobile
+            apps and provide you with credentials to access the features you selected in the survey. <strong><u>Your
+                    indicated
+                    payment will be deducted from the coupon.</u></strong> The staff will hand you the remaining amount
+            in cash.
+
+        </p>
+        <button onclick="loadIdeasData()">Go to Question</button>
+        <button onclick="showExitAlert()">Exit Survey</button>
+    </div>
+
+
+
+    <div id="product-screen-container">
+        <h1>Product Screen Question</h1>
+
+        <p id="product-screen-question"></p>
+        <button onclick="handleProductScreenYes()">Yes</button>
+        <button onclick="handleProductScreenNo()">No</button>
+
+    </div>
+
+    <div id="survey-container">
+        <h1>Survey Questions</h1>
+        <!-- Add the following line to show user progress -->
+        <p id="user-progress">Your progress: this is product <strong><span id="product-evaluated">1</span></strong> of
+            20 evaluated.
+        </p>
+
+        <!-- Show scenario descriptions -->
+        <p id="idea_desc"></p>
+
+        <!-- Question 1 -->
+        <div class="question-description">Question 1. Which of the following product feature would you be most likely to
+            use if it were
+            incorporated into the product?</div>
+        <form id="survey-form-1">
+        </form>
+
+        <!-- Question 2 -->
+        <div class="question-description"><br>Question 2. How much you'd pay for using the select product feature using
+            the $5 coupon? </div>
+        <form id="survey-form-2">
+            <label>
+                <input type="radio" name="question2" value="0"> $0&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+            <label>
+                <input type="radio" name="question2" value="1"> $1&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+            <label>
+                <input type="radio" name="question2" value="2"> $2&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+            <label>
+                <input type="radio" name="question2" value="3"> $3&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+            <label>
+                <input type="radio" name="question2" value="4"> $4&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+            <label>
+                <input type="radio" name="question2" value="5"> $5&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+
+            <br>
+            <br>
+
+            <br>
+        </form>
+
+
+        <br>
+        <br>
+
+        <button type="button" onclick="handleNext()">Next</button>
+        </form>
+    </div>
+
+    <script src="scripts/adopt_intention_script.js"></script>
+</body>
+
+</html>
