@@ -2,6 +2,10 @@
 // ---------------------------------------------------------------------------
 // =============== On Page Load ===============
 
+// handle to survey
+document.getElementById('to-survey').onclick = function() {
+    window.location.href = 'idea_evaluation.html';
+};
 
 // Read CSV data and filter based on user selections
 let filteredData = [];

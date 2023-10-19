@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey Thank You</title>
+    <link rel="stylesheet" href="styles/respondent_info_styles.css">
+</head>
+
+<body>
+
+    <div id="info">
+        <h1>Thank You for Taking the Survey!</h1>
+        <p>Thank you for taking the time to participate in our survey! Your valuable insights contribute
+            significantly to our research and the creation of better products in the future. <br><br>In the next
+            section, we
+            kindly request some
+            additional information. Please rest assured that this information will be used exclusively
+            for research purposes. Your responses will be kept entirely anonymous, and we sincerely appreciate your
+            contribution.<br><br>
+        </p>
+
+        <!-- Added line and instruction below -->
+        <hr>
+
+        <form id="participantForm">
+            <label class="question-description">Question 1. How do you identify your gender? </label><br>
+            <input type="radio" id="male" name="gender" value="male">
+            <label for="male">Male</label><br>
+
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">Female</label><br>
+
+            <input type="radio" id="other" name="gender" value="other">
+            <label for="other">Other</label><br>
+
+            <label class="question-description"><br>Question 2: Which of the following age group do you fall
+                into?</label><br>
+            <input type="radio" id="genZ" name="age" value="GenZ">
+            <label for="genZ">Gen Z</label><br>
+
+            <input type="radio" id="millennial" name="age" value="Millennial">
+            <label for="millennial">Millennial</label><br>
+
+            <input type="radio" id="genX" name="age" value="GenX">
+            <label for="genX">Gen X</label><br>
+
+            <input type="radio" id="boomer" name="age" value="Boomer">
+            <label for="boomer">Baby Boomer</label><br>
+            <br>
+            <label class="question-description" for="profession">Question 3: What is your profession? <br></label>
+            <input type="text" id="profession" name="profession" required><br>
+            <br>
+
+
+            <label class="question-description" for="pennStateStudent">Question 4: Are you a Penn State
+                student?</label><br>
+            <input type="checkbox" id="pennStateStudent" onclick="togglePennStateFields()">
+            <label for="pennStateStudent">Yes</label><br>
+
+            <div id="pennStateFields" style="display:none;">
+                <label for="major">Major:</label>
+                <input type="text" id="major" name="major"><br>
+
+                <label for="psuEmail">Penn State Email (required for course credits):</label>
+                <input type="email" id="psuEmail" name="psuEmail"><br>
+            </div>
+            <br><br>
+            <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function togglePennStateFields() {
+            var pennStateFields = document.getElementById("pennStateFields");
+            var pennStateCheckbox = document.getElementById("pennStateStudent");
+
+            pennStateFields.style.display = pennStateCheckbox.checked ? "block" : "none";
+        }
+
+        function submitForm() {
+            var formData = {
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                age: document.querySelector('input[name="age"]:checked').value,
+                profession: document.getElementById("profession").value,
+                pennStateStudent: document.getElementById("pennStateStudent").checked,
+                major: document.getElementById("major").value,
+                psuEmail: document.getElementById("psuEmail").value
+            };
+
+            console.log(formData);
+            // You can send this data to a server or perform other actions as needed.
+        }
+    </script>
+
+</body>
+
+</html>
