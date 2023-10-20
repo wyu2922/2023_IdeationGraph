@@ -33,7 +33,9 @@
      margin-right: 25px;
  }
 
- #participantForm input[type="radio"] {
+ #participantForm input[type="radio"],
+ #participantForm input[type="checkbox"],
+ #participantForm input[type="text"] {
      margin-right: 5px;
      margin-left: 20px;
      margin-bottom: 5px;
