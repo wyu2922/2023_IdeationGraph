@@ -6,7 +6,7 @@ let group_adopt_list = [];
 
 //track user progress
 let user_id;
-const total_product_required = 1
+const total_product_required = 5;
 let currentProductIndex = 0;
 
 //track progress for each product to be evaluated
@@ -58,10 +58,6 @@ function gen_random_samples() {
     //shuffle array
     selectedData = shuffleArray(selectedData);
 
-    console.log('Random Product:', randomProduct);
-    console.log(group_adopt_list);
-    console.log('Random Group:', randomGroup);
-    console.log('Idea number', selectedData.length);
 }
 
 
@@ -86,14 +82,17 @@ function displayIdeaEval() {
     document.getElementById('survey-container').style.display = 'block';
 
     // Update user progress information
-    currentIdeaIndex++;
-    document.getElementById('current-index').textContent = currentIdeaIndex;
+    document.getElementById('current-index').textContent = currentIdeaIndex + 1;
     document.getElementById('total-ideas').textContent = selectedData.length;
     document.getElementById('product-evaluated').textContent = currentProductIndex;
 
     // insert idea
     document.getElementById('idea_desc').innerHTML = `The product team of <strong style="color: red;"><em><u>${randomProduct}</strong></em></u> is considering adding a new feature to ${randomProduct}. Please read the following product feature description carefully.`;
     document.getElementById('idea').innerHTML = ` ${singleIdea} `;
+
+    // handle ideaindex
+    currentIdeaIndex++;
+
 }
 
 function clearRadioButtons(radio_labels) {
@@ -108,10 +107,26 @@ function clearRadioButtons(radio_labels) {
 
 // --- Send Data to Backend ---
 function sendData() {
-    //send data to backend
-    console.log('send data to backend')
-}
+    var dataSave = {
+        'table_idx': 'Table1',
+        'userid': user_id,
+        'app_name': randomProduct,
+        'new_idea': singleIdea,
+        'idea_idx': singleIdeaIdx,
+        'group_idea_eval': singleIdeaGroupIdex,
+        'group_adopt_intent': randomGroup,
+        'product_screen_result': productScreen,
+        'idea_qual_eval_q1': question1,
+        'idea_qual_eval_q2': question2,
+        'idea_qual_eval_q3': question3,
+        'idea_qual_eval_q4': question4,
+        'idea_qual_eval_q5': question5,
+        'idea_qual_eval_q6': question6
+    };
 
+    //send data to backend
+    console.log(dataSave);
+}
 
 //----------------------------------------------------------
 // ------------------ Handle Pages ---------------------
@@ -166,7 +181,7 @@ function toRespondentInfo() {
         if (confirm("Are you sure? It's $5 right away!")) {
             window.location.href = 'adopt_intention.html';
         } else {
-            window.location.href = 'respondent_info.html';
+            window.location.href = 'respondent_info.html?user_id=' + user_id;
         }
     }
 }
@@ -263,6 +278,7 @@ function handleSwitchProduct() {
     clearRadioButtons('input[name="question5"]');
     clearRadioButtons('input[name="question6"]');
     if (currentProductIndex < total_product_required) {
+        currentProductIndex--;
         gen_random_samples();
         displayProductScreen();
 

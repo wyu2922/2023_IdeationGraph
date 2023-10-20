@@ -6,7 +6,7 @@ let group_adopt_list = [];
 
 //track user progress
 let user_id;
-const total_product_required = 2
+const total_product_required = 3
 let currentProductIndex = 0;
 
 //track progress for each product to be evaluated
@@ -19,8 +19,11 @@ let randomGroup; //group_adopt_intent
 
 // record user selections
 let isUser = 0;
-let question1 = 9999;
-let question2 = 9999;
+let idea_idx;
+let new_idea;
+let group_idea_eval;
+let adopt_price;
+
 
 //----------------------------------------------------------
 // ------------------ Helper Functions ---------------------
@@ -38,8 +41,6 @@ function shuffleArray(array) {
 
 //Randomly select product and ideas for users to evaluate
 function gen_random_samples() {
-    currentIdeaIndex = 0
-
     // remove previous selections
     clearRadioButtons('input[type="radio"]')
 
@@ -59,7 +60,6 @@ function displayExprimentInstruction() {
     document.getElementById('intro-container').style.display = 'none';
     document.getElementById('instruction-container').style.display = 'block';
 }
-
 
 function displayProductScreen() {
     //display product screen question page
@@ -84,15 +84,19 @@ function displayIdeaEval() {
     // Insert ideas for Question 1 to radio options
     let optionsHtmlQuestion1 = '';
     for (let i = 0; i < selectedData.length; i++) {
-        optionsHtmlQuestion1 += `<input type="radio" name="question1" value="${selectedData[i].idea_idx}">${selectedData[i].new_idea}</label><br><br>`;
+        selectedRow = selectedData[i]
+        optionsHtmlQuestion1 += `<input type="radio" name="question1" 
+        value="${selectedRow.idea_idx}"
+        meta-new-idea="${selectedRow.new_idea}"
+        meta-group-idea-eval="${selectedRow.group_idea_eval}"
+        >${selectedRow.new_idea}</label><br><br>`;
     }
-    optionsHtmlQuestion1 += `<input type="radio" name="question1" value="999">None of the above.</label><br>`;
+    optionsHtmlQuestion1 += `<input type="radio" name="question1" value="none">None of the above.</label><br>`;
 
     // Append optionsHtmlQuestion1 to the survey-form
     document.getElementById('survey-form-1').innerHTML += optionsHtmlQuestion1;
+
 }
-
-
 
 function clearRadioButtons(radio_labels) {
     var radioButtons = document.querySelectorAll(radio_labels);
@@ -109,10 +113,21 @@ function clearRadioButtons(radio_labels) {
 
 // --- Send Data to Backend ---
 function sendData() {
-    //send data to backend
-    console.log('send data to backend', user_id, randomProduct, randomGroup, isUser, question1, question2)
-}
+    var dataSave = {
+        'table_idx': 'Table2',
+        'userid': user_id,
+        'app_name': randomProduct,
+        'group_adopt_intent': randomGroup,
+        'group_idea_eval': group_idea_eval,
+        'product_screen_isUser': isUser,
+        'adopted_idea_idx': idea_idx,
+        'adopted_new_idea': new_idea,
+        'adopt_price': adopt_price
+    };
 
+    //send data to backend
+    console.log(dataSave);
+}
 
 //----------------------------------------------------------
 // ------------------ Handle Pages ---------------------
@@ -162,7 +177,7 @@ function toRespondentInfo() {
         if (confirm("Are you sure? It's $5 right away!")) {
             window.location.href = 'adopt_intention.html';
         } else {
-            window.location.href = 'respondent_info.html';
+            window.location.href = 'respondent_info.html?user_id=' + user_id;
         }
     }
 }
@@ -181,10 +196,13 @@ function handleProductScreenYes() {
 }
 
 function handleProductScreenNo() {
-    isUser = 0
+    isUser = 0;
+    idea_idx = 'na';
+    new_idea = 'na';
+    group_idea_eval = 'na';
+    adopt_price = 'na';
+
     // send data
-    question1 = 9999;
-    question2 = 9999;
     sendData();
 
     //generate new product
@@ -199,8 +217,12 @@ function handleNext() {
         alert('Please answer all questions before proceeding.')
     } else {
         // Get the selected values for each question
-        question1 = document.querySelector('input[name="question1"]:checked').value;
-        question2 = document.querySelector('input[name="question2"]:checked').value;
+        var selectedRadio = document.querySelector('input[name="question1"]:checked');
+        idea_idx = selectedRadio.value;
+        new_idea = selectedRadio ? selectedRadio.getAttribute('meta-new-idea') : null;
+        group_idea_eval = selectedRadio ? selectedRadio.getAttribute('meta-group-idea-eval') : null;
+
+        adopt_price = document.querySelector('input[name="question2"]:checked').value;
         sendData()
 
         // Clear radio button selections
@@ -211,7 +233,7 @@ function handleNext() {
             gen_random_samples();
             displayProductScreen();
         } else {
-            window.location.href = 'respondent_info.html';
+            window.location.href = 'respondent_info.html?user_id=' + user_id;
         }
     }
 }

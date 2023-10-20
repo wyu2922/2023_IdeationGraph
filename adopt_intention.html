@@ -27,33 +27,34 @@
 
         </p>
         <button onclick="displayExprimentInstruction()">Start Survey</button>
+        <p><br>Or...</p>
         <button onclick="toRespondentInfo()">Exit Survey</button>
-        <button onclick="showExitAlert()">To Homepage</button>
+        <button onclick="showExitAlert()">Go To Homepage</button>
     </div>
 
 
     <div id="instruction-container">
         <h1>Survey Instruction</h1>
         <p>Please read the following instruction carefully.<br><br>
-            On your desk, you'll find a folder with a $5 coupon. In the upcoming survey, you'll be presented with a
-            random mobile app and asked if you currently use it. If yes, you'll assess 5 shortlisted features for the
-            app's upcoming update. <strong>Choose the feature you'd most like to use and specify how much you'd pay for
+            On your desk, you'll find a folder containing a $5 coupon. During the upcoming survey, you'll be presented
+            with a randomly selected mobile app and asked whether you currently use it. If yes, you'll be asked to
+            evaluate 5 shortlisted features for the app's upcoming update. <strong>Choose the feature you would most
+                like
+                to use and specify how much you'd pay for
                 using it
                 using the $5 coupon </strong>(payment options range from 0 to 5).
             <br>
             <br>
-            As you exit the room after the survey, a staff member will redeem the coupon. Out of all the products you
-            evaluated, 5 of them already have a real beta version. Our system will randomly
-            choose one from the 5
-            mobile
-            apps and provide you with credentials to access the features you selected in the survey. <strong><u>Your
+            Upon completing the survey and exiting the room, a staff member will redeem the coupon. Among all the
+            products you assessed, one already has a beta version. We will provide you with credentials to access the
+            features you selected in the survey. <strong><u>Your
                     indicated
                     payment will be deducted from the coupon.</u></strong> The staff will hand you the remaining amount
             in cash.
 
         </p>
         <button onclick="loadIdeasData()">Go to Question</button>
-        <button onclick="showExitAlert()">Exit Survey</button>
+        <button onclick="showExitAlert()">Go To Homepage</button>
     </div>
 
 
@@ -62,8 +63,8 @@
         <h1>Product Screen Question</h1>
 
         <p id="product-screen-question"></p>
-        <button onclick="handleProductScreenYes()">Yes</button>
-        <button onclick="handleProductScreenNo()">No</button>
+        <button onclick="handleProductScreenYes()">&nbsp;Yes, I am.&nbsp;</button>
+        <button onclick="handleProductScreenNo()">&nbsp;No, I am not.&nbsp;</button>
 
     </div>
 
@@ -114,10 +115,7 @@
         </form>
 
 
-        <br>
-        <br>
-
-        <button type="button" onclick="handleNext()">Next</button>
+        <button type="button" onclick="handleNext()">&nbsp;&nbsp;Next Product&nbsp;&nbsp;</button>
         </form>
     </div>
 
