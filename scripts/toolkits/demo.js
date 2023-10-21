@@ -12,7 +12,7 @@ await redis.test_connection();
 for (let i = 1; i <= 10; i++) {
   const jsonObject = {
     table_idx: 'TestTable',
-    user_id: i,
+    userid: i,
     name: 'John' + i,
     age: 20+i,
     gender: i % 2,
@@ -21,7 +21,7 @@ for (let i = 1; i <= 10; i++) {
   // STEP2: Replace jsonObject as your dict
   await redis.write(jsonObject, err => {
     if (err) {
-      console.error('Error writing JSON object: %s %s', err, jsonObject)
+      console.error('Error writing JSON object: %s %s', err, jsonObject);
     }
   })
 }

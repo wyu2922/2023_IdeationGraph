@@ -31,7 +31,7 @@ class RedisClient {
      * Important: make sure Your dict has table_idx and user_id.
      */
     const timestamp = Date.now()
-    const key = json.table_idx + ':' + json.user_id + ':' + timestamp;
+    const key = json.table_idx + ':' + json.userid + ':' + timestamp;
     await this.client.hSet(key, json, callback);
   }
 
