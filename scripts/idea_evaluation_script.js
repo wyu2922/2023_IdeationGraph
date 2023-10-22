@@ -56,7 +56,6 @@ function retryPostRequest(url, options, maxRetries) {
 document.addEventListener('DOMContentLoaded', () => {
   const getDataButton = document.getElementById('getDataButton');
   const dataTable = document.getElementById('dataTable');
-  const dataBody = document.getElementById('dataBody');
 
   getDataButton.addEventListener('click', () => {
     const dict = {
@@ -72,37 +71,24 @@ document.addEventListener('DOMContentLoaded', () => {
     retryPostRequest("https://www.idea-db.com:60000/get", requestOptions, 1)
       .then((data) => {
         // Clear any existing data
-        dataBody.innerHTML = '';
-
-        // Display the table and populate it with data
-        const headerRow = document.createElement('tr');
-        for (const key in data[0]) {
-            if (key === "new_idea" || (key.startsWith("idea_qual_eval") && key !==  "idea_qual_eval_q1")) {
-                  continue
-              }
-            const headerCell = document.createElement('th');
-            headerCell.textContent = key;
-            headerRow.appendChild(headerCell);
-        }
-        dataBody.appendChild(headerRow);
-
+        dataTable.innerHTML = '';
         data.forEach((item) => {
-          const row = document.createElement('tr');
-          for (const key in item) {
-              if (key === "new_idea" || (key.startsWith("idea_qual_eval") && key !==  "idea_qual_eval_q1")) {
-                  continue
-              }
-            const cell = document.createElement('td');
-            cell.textContent = JSON.stringify(item[key]);
+            const row = document.createElement('details');
+            const summary = document.createElement('summary');
+            const date = new Date(item.timestamp);
+            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
+            summary.textContent = item.table_idx + " " + item.userid + " " + formattedDate;
+            const cell = document.createElement('p');
+            cell.textContent = JSON.stringify(item);
+            row.appendChild(summary);
             row.appendChild(cell);
-          }
-          dataBody.appendChild(row);
+          dataTable.appendChild(row);
         });
-        dataTable.style.display = 'table';
+        // dataTable.style.display = 'table';
       })
       .catch((error) => {
         console.error('Error:', error);
-        dataBody.innerHTML = 'Error occurred while fetching data.';
+        dataTable.innerHTML = 'Error occurred while fetching data.';
         dataTable.style.display = 'none';
       });
   });
