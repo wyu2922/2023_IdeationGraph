@@ -34,6 +34,81 @@ let question6;
 //----------------------------------------------------------
 // ------------------ Helper Functions ---------------------
 
+// --- DB operation function ---
+function retryPostRequest(url, options, maxRetries) {
+  return fetch(url, options)
+    .then((response) => {
+      if (!response.ok) {
+        if (maxRetries > 0) {
+          console.log('Retrying POST request...');
+          return retryPostRequest(url, options, maxRetries - 1);
+        } else {
+          throw new Error('Network response was not ok after retrying');
+        }
+      }
+      return response.json();
+    })
+    .catch((error) => {
+    console.error('Error:', error);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const getDataButton = document.getElementById('getDataButton');
+  const dataTable = document.getElementById('dataTable');
+  const dataBody = document.getElementById('dataBody');
+
+  getDataButton.addEventListener('click', () => {
+    const dict = {
+        table_idx: "Table1",
+        userid: "*"
+    }
+    const jsonData = JSON.stringify(dict);
+    const requestOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json',},
+      body: jsonData, // Pass the JSON data as the request body
+    };
+    retryPostRequest("http://localhost:60000/get", requestOptions, 1)
+      .then((data) => {
+        // Clear any existing data
+        dataBody.innerHTML = '';
+
+        // Display the table and populate it with data
+        const headerRow = document.createElement('tr');
+        for (const key in data[0]) {
+            if (key === "new_idea" || (key.startsWith("idea_qual_eval") && key !==  "idea_qual_eval_q1")) {
+                  continue
+              }
+            const headerCell = document.createElement('th');
+            headerCell.textContent = key;
+            headerRow.appendChild(headerCell);
+        }
+        dataBody.appendChild(headerRow);
+
+        data.forEach((item) => {
+          const row = document.createElement('tr');
+          for (const key in item) {
+              if (key === "new_idea" || (key.startsWith("idea_qual_eval") && key !==  "idea_qual_eval_q1")) {
+                  continue
+              }
+            const cell = document.createElement('td');
+            cell.textContent = JSON.stringify(item[key]);
+            row.appendChild(cell);
+          }
+          dataBody.appendChild(row);
+        });
+        dataTable.style.display = 'table';
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        dataBody.innerHTML = 'Error occurred while fetching data.';
+        dataTable.style.display = 'none';
+      });
+  });
+});
+
+
 // --- Helper Functions for Data Logic ---
 
 function shuffleArray(array) {
@@ -126,6 +201,17 @@ function sendData() {
 
     //send data to backend
     console.log(dataSave);
+    const jsonData = JSON.stringify(dataSave);
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonData, // Pass the JSON data as the request body
+    };
+    retryPostRequest("http://localhost:60000/set", requestOptions, 1).then(response => {
+        console.log('Response data:', response);
+    });
 }
 
 //----------------------------------------------------------

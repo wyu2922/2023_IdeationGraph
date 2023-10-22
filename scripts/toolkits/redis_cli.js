@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import {createClient} from 'redis';
 
 class RedisClient {
   /**
@@ -21,21 +21,19 @@ class RedisClient {
 
   async test_connection() {
     await this.client.set('magic_word', 'I_LOVE_MIAOMIAO');
-    const value = await this.client.get('magic_word');
-    console.log(value)
-    return value;
+    return await this.client.get('magic_word');
   }
 
-  async write(json, callback) {
+  async write(json) {
     /**
      * Important: make sure Your dict has table_idx and user_id.
      */
     const timestamp = Date.now()
     const key = json.table_idx + ':' + json.userid + ':' + timestamp;
-    await this.client.hSet(key, json, callback);
+    return await this.client.hSet(key, json);
   }
 
-  async read(table, user_id, callback) {
+  async read(table, user_id) {
     /**
      * Return a list of dict matching the table and user.
      * You may set user_id to '*' to read the whole table.
