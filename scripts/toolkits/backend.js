@@ -1,9 +1,14 @@
-import express from "express";
+import express from "express"
 import cors from "cors"
-import bodyParser from "body-parser";
-import RedisClient from "./redis_cli.js";
+import bodyParser from "body-parser"
+import https from "https"
+import fs from "fs"
+import RedisClient from "./redis_cli.js"
 const app = express();
 
+const privateKey = fs.readFileSync('~/private-key.pem', 'utf8');
+const certificate = fs.readFileSync('~/certificate.pem', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -37,6 +42,7 @@ app.post('/get', (req, res) => {
   })
 });
 
-app.listen(60000, () => {
+const httpsServer = https.createServer(credentials, app);
+httpsServer.listen(60000, () => {
   console.log('Server is running on port 60000');
 });
