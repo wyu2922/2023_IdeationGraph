@@ -30,6 +30,7 @@ class RedisClient {
      */
     const timestamp = Date.now()
     const key = json.table_idx + ':' + json.userid + ':' + timestamp;
+    json.timestamp = timestamp;
     return await this.client.hSet(key, json);
   }
 
@@ -40,15 +41,19 @@ class RedisClient {
      */
     let list = []
     const key = table + ':' + user_id + ':*'
-    const keys = await this.client.keys(key, (err, keys) => {
-      if (err) throw err;
-      return keys
-    });
+    const keys = [];
+    let cursor = '0';
+    do {
+      const [newCursor, results] = await this.redis.scan(cursor, 'MATCH', key);
+      cursor = newCursor;
+      keys.push(...results);
+    } while (cursor !== '0');
 
     for (let i = 0; i < keys.length; i++) {
       let json = await this.client.hGetAll(keys[i]);
       list.push(json);
     }
+    list.sort((a, b) => a.timestamp - b.timestamp);
     return list;
   }
 
