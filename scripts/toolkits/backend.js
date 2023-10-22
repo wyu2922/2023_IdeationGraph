@@ -1,10 +1,5 @@
-// const express = require('express');
-// const redis = require('redis');
-// const bodyParser = require('body-parser');
-// const RedisClient = require('./toolkits/redis_cli')
 import express from "express";
 import cors from "cors"
-import redis, {createClient} from "redis"
 import bodyParser from "body-parser";
 import RedisClient from "./redis_cli.js";
 const app = express();
