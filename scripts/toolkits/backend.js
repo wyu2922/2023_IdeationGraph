@@ -6,8 +6,8 @@ import fs from "fs"
 import RedisClient from "./redis_cli.js"
 const app = express();
 
-const privateKey = fs.readFileSync('~/private-key.pem', 'utf8');
-const certificate = fs.readFileSync('~/certificate.pem', 'utf8');
+const privateKey = fs.readFileSync('/root/private-key.pem', 'utf8');
+const certificate = fs.readFileSync('/root/certificate.pem', 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 app.use(bodyParser.json());
