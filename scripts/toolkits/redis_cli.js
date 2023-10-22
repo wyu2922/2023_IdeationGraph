@@ -44,7 +44,7 @@ class RedisClient {
     const keys = [];
     let cursor = '0';
     do {
-      const reply = await this.client.scan(cursor, 'MATCH', key, 'COUNT', 100);
+      const reply = await this.client.scan(cursor, 'MATCH', key, 'COUNT', 5);
       console.log("====");
       console.log(reply);
       console.log(reply.keys);
