@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: {'Content-Type': 'application/json',},
       body: jsonData, // Pass the JSON data as the request body
     };
-    retryPostRequest("https://108.61.191.187:60000/get", requestOptions, 1)
+    retryPostRequest("https://www.idea-db.com:60000/get", requestOptions, 1)
       .then((data) => {
         // Clear any existing data
         dataBody.innerHTML = '';
@@ -209,7 +209,7 @@ function sendData() {
       },
       body: jsonData, // Pass the JSON data as the request body
     };
-    retryPostRequest("https://108.61.191.187:60000/set", requestOptions, 1).then(response => {
+    retryPostRequest("https://www.idea-db.com:60000/set", requestOptions, 1).then(response => {
         console.log('Response data:', response);
     });
 }
