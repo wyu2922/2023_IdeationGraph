@@ -44,11 +44,12 @@ class RedisClient {
     const keys = [];
     let cursor = '0';
     do {
-      const [newCursor, results] = await this.client.scan(cursor, 'MATCH', key);
+      const reply = await this.client.scan(cursor, 'MATCH', key, 'COUNT', 100);
       console.log("====");
-      console.log(results);
-      cursor = newCursor;
-      keys.push(...results);
+      console.log(reply);
+      console.log(reply[1]);
+      cursor = reply[0];
+      keys.push(...reply[1]);
     } while (cursor !== '0');
 
     for (let i = 0; i < keys.length; i++) {
