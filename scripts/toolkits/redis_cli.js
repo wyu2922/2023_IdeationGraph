@@ -50,7 +50,7 @@ class RedisClient {
       console.log(reply.keys);
       cursor = reply.cursor;
       keys.push(...reply.keys);
-    } while (cursor !== '0');
+    } while (cursor !== 0);
 
     for (let i = 0; i < keys.length; i++) {
       let json = await this.client.hGetAll(keys[i]);
