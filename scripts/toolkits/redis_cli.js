@@ -44,7 +44,7 @@ class RedisClient {
     const keys = [];
     let cursor = '0';
     do {
-      const [newCursor, results] = await this.redis.scan(cursor, 'MATCH', key);
+      const [newCursor, results] = await this.client.scan(cursor, 'MATCH', key);
       cursor = newCursor;
       keys.push(...results);
     } while (cursor !== '0');
