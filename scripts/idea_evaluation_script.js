@@ -75,9 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
         data.forEach((item) => {
             const row = document.createElement('details');
             const summary = document.createElement('summary');
-            const date = new Date(item.timestamp);
-            const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
-            summary.textContent = item.table_idx + " " + item.userid + " " + formattedDate;
+            const date = new Date(parseInt(item.timestamp, 10));
+            summary.textContent = item.table_idx + " " + item.userid + " " + date.toISOString();
             const cell = document.createElement('p');
             cell.textContent = JSON.stringify(item);
             row.appendChild(summary);
