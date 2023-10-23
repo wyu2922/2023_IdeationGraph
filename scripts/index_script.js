@@ -3,7 +3,7 @@
 // =============== On Page Load ===============
 
 // handle to survey
-document.getElementById('to-survey').onclick = function () {
+document.getElementById('to-survey').onclick = function() {
     window.location.href = 'idea_evaluation.html';
 };
 
@@ -11,7 +11,7 @@ document.getElementById('to-survey').onclick = function () {
 let filteredData = [];
 async function fetchDataAndFilter() {
     try {
-        const data = await d3.csv('data/edge_preds_with_cluster_info_1022.csv');
+        const data = await d3.csv('data/GAE_EdgePreds_0906.csv');
         populateProductDropdown(data);
         updateFilteredData(data);
         initializeEventListeners(data);
@@ -64,19 +64,16 @@ function updateFilteredData(data) {
             const cell0 = document.createElement('td');
             const cell1 = document.createElement('td');
             const cell2 = document.createElement('td');
-            const cell3 = document.createElement('td');
 
             // Add row index to the new cell
             cell0.textContent = index;
             // Rename columns as requested
             cell1.textContent = d.src_names;
             cell2.textContent = d.edge_probs;
-            cell3.textContent = d.category_examplar;
 
             row.appendChild(cell0);
             row.appendChild(cell1);
             row.appendChild(cell2);
-            row.appendChild(cell3);
             tableBody.appendChild(row);
         });
     } else {
@@ -189,9 +186,7 @@ async function handleSubmitRowSelection() {
         // Call OpenAI
         try {
             // Make an asynchronous request to OpenAI's API
-            console.log(keywordsString)
             const assistantResponse = await fetchAndGenerateFeatures(apiKey, productName, keywordsString);
-            console.log(assistantResponse)
             // Display the generated features
             displayGeneratedFeatures(productName, keywordsString, assistantResponse);
         } catch (error) {
@@ -237,8 +232,8 @@ function formatAssistantResponse(response) {
 
             // Create separate <li> for each subpoint
             const subPointItems = subPoints
-                .filter(subPoint => subPoint.trim() !== '') // Exclude empty rows
-                .map(subPoint => `<li>${subPoint.trim()}</li><br>`);
+            .filter(subPoint => subPoint.trim() !== '') // Exclude empty rows
+            .map(subPoint => `<li>${subPoint.trim()}</li><br>`);
 
             // Join the subpoint items to form the final HTML for this paragraph
             return subPointItems.join('');
