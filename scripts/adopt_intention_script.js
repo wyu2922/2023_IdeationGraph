@@ -46,15 +46,18 @@ function retryPostRequest(url, options, maxRetries) {
 
 // --- Send Data to Backend ---
 function sendData() {
+    var new_idea_sent = new_idea !== null ? new_idea : 'noneofabove';
+    var group_idea_eval_sent = group_idea_eval !== null ? group_idea_eval : 'noneofabove';
+
     var dataSave = {
         'table_idx': 'Table2',
         'userid': user_id,
         'app_name': randomProduct,
         'group_adopt_intent': randomGroup,
-        'group_idea_eval': group_idea_eval,
+        'group_idea_eval': group_idea_eval_sent,
         'product_screen_isUser': isUser,
         'adopted_idea_idx': idea_idx,
-        'adopted_new_idea': new_idea,
+        'adopted_new_idea': new_idea_sent,
         'adopt_price': adopt_price
     };
     //send data to backend
