@@ -56,7 +56,6 @@ class RedisClient {
       list.push(json);
     }
     list.sort((a, b) => a.timestamp - b.timestamp);
-    console.log(list);
     return list;
   }
 
