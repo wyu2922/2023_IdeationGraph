@@ -31,6 +31,7 @@ class RedisClient {
     const timestamp = Date.now()
     const key = json.table_idx + ':' + json.userid + ':' + timestamp;
     json.timestamp = timestamp;
+    json = convertBoolToInt(json);
     return await this.client.hSet(key, json);
   }
 
@@ -44,7 +45,7 @@ class RedisClient {
     const keys = [];
     let cursor = '0';
     do {
-      const reply = await this.client.scan(cursor, {'MATCH': key, 'COUNT': 10});
+      const reply = await this.client.scan(cursor, 'MATCH', key, 'COUNT', 10);
       console.log(reply);
       cursor = reply.cursor;
       keys.push(...reply.keys);
@@ -55,6 +56,7 @@ class RedisClient {
       list.push(json);
     }
     list.sort((a, b) => a.timestamp - b.timestamp);
+    console.log(list);
     return list;
   }
 
@@ -68,6 +70,15 @@ function getMonth(mon){
    * Authentication function.
    */
    return new Date(Date.parse(mon +" 1, 2012")).getMonth()+1;
+}
+
+function convertBoolToInt(obj) {
+  for (let key in obj) {
+    if (typeof obj[key] === 'boolean') {
+      obj[key] = obj[key] ? 1 : 0;
+    }
+  }
+  return obj;
 }
 
 export default RedisClient;
