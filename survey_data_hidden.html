@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Fetcher</title>
+</head>
+
+<body>
+    <label for="tableIndex">Table Index: </label>
+    <input type="text" id="tableIndex" placeholder="Enter TableIdx (Table1, Table2, Table3)">
+    <button id="getDataButton">Get Current User Data</button>
+    <div id="dataTable"></div>
+
+    <script>
+        function retryPostRequest(url, options, maxRetries) {
+            return fetch(url, options)
+                .then((response) => {
+                    if (!response.ok) {
+                        if (maxRetries > 0) {
+                            console.log('Retrying POST request...');
+                            return retryPostRequest(url, options, maxRetries - 1);
+                        } else {
+                            throw new Error('Network response was not ok after retrying');
+                        }
+                    }
+                    return response.json();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const getDataButton = document.getElementById('getDataButton');
+            const dataTable = document.getElementById('dataTable');
+            const tableIndexInput = document.getElementById('tableIndex');
+
+            getDataButton.addEventListener('click', () => {
+                const tableIndex = tableIndexInput.value || "*"; // Default to "Table3" if no input
+                const dict = {
+                    table_idx: tableIndex,
+                    userid: "*"
+                };
+                const jsonData = JSON.stringify(dict);
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: jsonData,
+                };
+                retryPostRequest("https://www.idea-db.com:60000/get", requestOptions, 3)
+                    .then((data) => {
+                        // Order data by timestamp from newest to oldest
+                        data.sort((a, b) => b.timestamp - a.timestamp);
+
+                        // Clear any existing data
+                        dataTable.innerHTML = '';
+                        data.forEach((item) => {
+                            const row = document.createElement('details');
+                            const summary = document.createElement('summary');
+                            const date = new Date(parseInt(item.timestamp, 10));
+                            summary.textContent = item.table_idx + " " + item.userid + " " + date.toISOString();
+                            const cell = document.createElement('p');
+                            cell.textContent = JSON.stringify(item);
+                            row.appendChild(summary);
+                            row.appendChild(cell);
+                            dataTable.appendChild(row);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        dataTable.innerHTML = 'Error occurred while fetching data.';
+                        dataTable.style.display = 'none';
+                    });
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

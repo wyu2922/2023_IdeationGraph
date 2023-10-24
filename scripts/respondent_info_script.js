@@ -8,8 +8,9 @@ let psuEmail;
 
 // Get user_id from the URL
 user_id = getParameterByName('user_id');
-console.log(user_id)
-
+if (user_id === null) {
+    user_id = 'u_9999999999999_999';
+}
 // Function to extract parameter from URL
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
@@ -22,6 +23,25 @@ function getParameterByName(name, url) {
 }
 
 // --- Send Data to Backend ---
+// --- DB operation function ---
+function retryPostRequest(url, options, maxRetries) {
+    return fetch(url, options)
+        .then((response) => {
+            if (!response.ok) {
+                if (maxRetries > 0) {
+                    console.log('Retrying POST request...');
+                    return retryPostRequest(url, options, maxRetries - 1);
+                } else {
+                    throw new Error('Network response was not ok after retrying');
+                }
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
 function sendData() {
     var dataSave = {
         'table_idx': 'Table3',
@@ -33,8 +53,20 @@ function sendData() {
         'major': major ? major.value : 'defaultMajor',
         'psuEmail': psuEmail ? psuEmail.value : 'defaultEmail'
     };
+
     //send data to backend
     console.log(dataSave);
+    const jsonData = JSON.stringify(dataSave);
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: jsonData, // Pass the JSON data as the request body
+    };
+    retryPostRequest("https://www.idea-db.com:60000/set", requestOptions, 3).then(response => {
+        console.log('Response data:', response);
+    });
 };
 
 

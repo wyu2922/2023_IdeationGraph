@@ -25,6 +25,53 @@ let group_idea_eval;
 let adopt_price;
 
 
+// --- DB operation function ---
+function retryPostRequest(url, options, maxRetries) {
+    return fetch(url, options)
+        .then((response) => {
+            if (!response.ok) {
+                if (maxRetries > 0) {
+                    console.log('Retrying POST request...');
+                    return retryPostRequest(url, options, maxRetries - 1);
+                } else {
+                    throw new Error('Network response was not ok after retrying');
+                }
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
+
+// --- Send Data to Backend ---
+function sendData() {
+    var dataSave = {
+        'table_idx': 'Table2',
+        'userid': user_id,
+        'app_name': randomProduct,
+        'group_adopt_intent': randomGroup,
+        'group_idea_eval': group_idea_eval,
+        'product_screen_isUser': isUser,
+        'adopted_idea_idx': idea_idx,
+        'adopted_new_idea': new_idea,
+        'adopt_price': adopt_price
+    };
+    //send data to backend
+    console.log(dataSave);
+    const jsonData = JSON.stringify(dataSave);
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: jsonData, // Pass the JSON data as the request body
+    };
+    retryPostRequest("https://www.idea-db.com:60000/set", requestOptions, 3).then(response => {
+        console.log('Response data:', response);
+    });
+}
+
 //----------------------------------------------------------
 // ------------------ Helper Functions ---------------------
 
@@ -111,23 +158,7 @@ function clearRadioButtons(radio_labels) {
 }
 
 
-// --- Send Data to Backend ---
-function sendData() {
-    var dataSave = {
-        'table_idx': 'Table2',
-        'userid': user_id,
-        'app_name': randomProduct,
-        'group_adopt_intent': randomGroup,
-        'group_idea_eval': group_idea_eval,
-        'product_screen_isUser': isUser,
-        'adopted_idea_idx': idea_idx,
-        'adopted_new_idea': new_idea,
-        'adopt_price': adopt_price
-    };
 
-    //send data to backend
-    console.log(dataSave);
-}
 
 //----------------------------------------------------------
 // ------------------ Handle Pages ---------------------

@@ -36,61 +36,61 @@ let question6;
 
 // --- DB operation function ---
 function retryPostRequest(url, options, maxRetries) {
-  return fetch(url, options)
-    .then((response) => {
-      if (!response.ok) {
-        if (maxRetries > 0) {
-          console.log('Retrying POST request...');
-          return retryPostRequest(url, options, maxRetries - 1);
-        } else {
-          throw new Error('Network response was not ok after retrying');
-        }
-      }
-      return response.json();
-    })
-    .catch((error) => {
-    console.error('Error:', error);
-    });
+    return fetch(url, options)
+        .then((response) => {
+            if (!response.ok) {
+                if (maxRetries > 0) {
+                    console.log('Retrying POST request...');
+                    return retryPostRequest(url, options, maxRetries - 1);
+                } else {
+                    throw new Error('Network response was not ok after retrying');
+                }
+            }
+            return response.json();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const getDataButton = document.getElementById('getDataButton');
-  const dataTable = document.getElementById('dataTable');
+    const getDataButton = document.getElementById('getDataButton');
+    const dataTable = document.getElementById('dataTable');
 
-  getDataButton.addEventListener('click', () => {
-    const dict = {
-        table_idx: "Table1",
-        userid: "*"
-    }
-    const jsonData = JSON.stringify(dict);
-    const requestOptions = {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json',},
-      body: jsonData, // Pass the JSON data as the request body
-    };
-    retryPostRequest("https://www.idea-db.com:60000/get", requestOptions, 1)
-      .then((data) => {
-        // Clear any existing data
-        dataTable.innerHTML = '';
-        data.forEach((item) => {
-            const row = document.createElement('details');
-            const summary = document.createElement('summary');
-            const date = new Date(parseInt(item.timestamp, 10));
-            summary.textContent = item.table_idx + " " + item.userid + " " + date.toISOString();
-            const cell = document.createElement('p');
-            cell.textContent = JSON.stringify(item);
-            row.appendChild(summary);
-            row.appendChild(cell);
-          dataTable.appendChild(row);
-        });
-        // dataTable.style.display = 'table';
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        dataTable.innerHTML = 'Error occurred while fetching data.';
-        dataTable.style.display = 'none';
-      });
-  });
+    getDataButton.addEventListener('click', () => {
+        const dict = {
+            table_idx: "Table1",
+            userid: "*"
+        }
+        const jsonData = JSON.stringify(dict);
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: jsonData, // Pass the JSON data as the request body
+        };
+        retryPostRequest("https://www.idea-db.com:60000/get", requestOptions, 1)
+            .then((data) => {
+                // Clear any existing data
+                dataTable.innerHTML = '';
+                data.forEach((item) => {
+                    const row = document.createElement('details');
+                    const summary = document.createElement('summary');
+                    const date = new Date(parseInt(item.timestamp, 10));
+                    summary.textContent = item.table_idx + " " + item.userid + " " + date.toISOString();
+                    const cell = document.createElement('p');
+                    cell.textContent = JSON.stringify(item);
+                    row.appendChild(summary);
+                    row.appendChild(cell);
+                    dataTable.appendChild(row);
+                });
+                // dataTable.style.display = 'table';
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                dataTable.innerHTML = 'Error occurred while fetching data.';
+                dataTable.style.display = 'none';
+            });
+    });
 });
 
 
@@ -188,13 +188,13 @@ function sendData() {
     console.log(dataSave);
     const jsonData = JSON.stringify(dataSave);
     const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonData, // Pass the JSON data as the request body
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: jsonData, // Pass the JSON data as the request body
     };
-    retryPostRequest("https://www.idea-db.com:60000/set", requestOptions, 1).then(response => {
+    retryPostRequest("https://www.idea-db.com:60000/set", requestOptions, 3).then(response => {
         console.log('Response data:', response);
     });
 }
