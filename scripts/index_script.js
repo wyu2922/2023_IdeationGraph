@@ -11,7 +11,7 @@ document.getElementById('to-survey').onclick = function () {
 let filteredData = [];
 async function fetchDataAndFilter() {
     try {
-        const data = await d3.csv('data/edge_preds_with_cluster_info_1022.csv');
+        const data = await d3.csv('data/edge_preds_with_cluster_info_1022_1.csv');
         populateProductDropdown(data);
         updateFilteredData(data);
         initializeEventListeners(data);
