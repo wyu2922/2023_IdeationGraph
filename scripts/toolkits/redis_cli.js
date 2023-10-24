@@ -45,7 +45,7 @@ class RedisClient {
     const keys = [];
     let cursor = '0';
     do {
-      const reply = await this.client.scan(cursor, 'MATCH', key, 'COUNT', 10);
+      const reply = await this.client.scan(cursor, {'MATCH': key, 'COUNT': 10});
       console.log(reply);
       cursor = reply.cursor;
       keys.push(...reply.keys);
@@ -56,7 +56,6 @@ class RedisClient {
       list.push(json);
     }
     list.sort((a, b) => a.timestamp - b.timestamp);
-    console.log(list);
     return list;
   }
 
